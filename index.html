@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMS - Design Patterns Demo (Shiva/CS405)</title>
+    <title>LMS - Design Patterns Demo (Deekshith/CS405)</title>
     <style>
         /* General Styles */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
@@ -32,7 +32,7 @@
     <div class="section">
         <h3>📢 System Notifications Log (Observer Pattern)</h3>
         <div id="notificationLog" class="alert-log">System Ready. Notifications will appear here...</div>
-        <button class="action-button" onclick="lmsApp.publishUpdate()">Publish New Assignment (Notifies Student **Shiva**)</button>
+        <button class="action-button" onclick="lmsApp.publishUpdate()">Publish New Assignment (Notifies Student **Deekshith**)</button>
     </div>
 
     <div class="section">
@@ -53,7 +53,7 @@
             <strong>Course: CS405 - Software Engineering & System Design</strong>
         </div>
         <div class="student-box">
-            <strong>Student: Shiva</strong>
+            <strong>Student: Deekshith</strong>
         </div>
         <button class="action-button" onclick="lmsApp.executeCommand('enroll')">Enroll Course (Command)</button>
         <button class="action-button" onclick="lmsApp.executeCommand('drop')">Drop Course (Command)</button>
@@ -203,23 +203,24 @@
 
         class LMS {
             constructor() {
-                // UPDATED COURSE NAME: Software Engineering & System Design
+                // Course subject (The Subject in Observer Pattern)
                 this.cs405 = new Course("CS405 - Software Engineering & System Design");
-                this.shiva = new Student("Shiva"); 
+                // Student object (The Observer and Command Receiver)
+                this.studentDeekshith = new Student("Deekshith"); 
                 
+                // Strategy instances
                 this.gradingStrategies = {
                     percentage: new PercentageGrading(),
                     cgpa: new CGPAGrading(),
                     passfail: new PassFailGrading(),
                 };
 
-                // Auto-enroll Shiva initially for Observer demo setup
-                this.cs405.addStudent(this.shiva);
+                // Initial Setup: Auto-enroll Deekshith
+                this.cs405.addStudent(this.studentDeekshith);
             }
 
             // --- Observer Interaction ---
             publishUpdate() {
-                // UPDATED ASSIGNMENT NAME (SE/SD Topic)
                 this.cs405.publishAssignment("UML Modeling Project");
             }
 
@@ -241,16 +242,19 @@
             executeCommand(commandType) {
                 let command;
                 
+                // Reference the Deekshith student object
+                const student = this.studentDeekshith; 
+                const course = this.cs405;
+
                 switch (commandType) {
                     case 'enroll':
-                        command = new EnrollCommand(this.shiva, this.cs405);
+                        command = new EnrollCommand(student, course);
                         break;
                     case 'drop':
-                        command = new DropCommand(this.shiva, this.cs405);
+                        command = new DropCommand(student, course);
                         break;
                     case 'submit':
-                        // UPDATED SUBMISSION ITEM (SE/SD Topic)
-                        command = new SubmitCommand(this.shiva, "Architecture Review Report");
+                        command = new SubmitCommand(student, "Architecture Review Report");
                         break;
                     default:
                         logNotification("Invalid command type.");
