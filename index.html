@@ -1,224 +1,274 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Prototype Pattern Demo with Login</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif; background:#f5f7fa; padding:20px;
-      display:flex; justify-content:center; align-items:center; height:100vh;
-    }
-    .box {
-      background:#fff; padding:20px; border-radius:8px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.15); width:420px;
-    }
-    h2, h3 { margin-top:0; text-align:center; }
-    label { display:block; margin-top:10px; font-size:14px; }
-    input, select {
-      width:100%; padding:8px; margin-top:4px;
-      border:1px solid #ccc; border-radius:6px;
-    }
-    button {
-      margin-top:14px; padding:10px; width:100%;
-      border:0; border-radius:6px; cursor:pointer;
-      background:#007bff; color:white; font-weight:bold;
-    }
-    .hidden { display:none; }
-    .result {
-      margin-top:14px; background:#f0f4ff; padding:10px;
-      border-radius:6px; font-size:14px; white-space:pre-line;
-    }
-    .error { color:red; font-size:13px; margin-top:6px; text-align:center; }
-    .tabs { display:flex; justify-content:space-around; margin-bottom:12px; }
-    .tabs button {
-      width:auto; flex:1; margin:0 4px; padding:8px;
-      background:#eee; color:#333;
-    }
-    .tabs button.active { background:#007bff; color:white; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS - Design Patterns Demo (Shiva/CS405)</title>
+    <style>
+        /* General Styles */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
+        h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .section { background: #ffffff; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .course-box, .student-box { border: 1px solid #e0e0e0; padding: 15px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
+        .course-box strong { color: #28a745; }
+        .student-box strong { color: #dc3545; }
+
+        /* Button and Input Styles */
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; border: none; border-radius: 4px; transition: background 0.3s; }
+        .action-button { background-color: #007bff; color: white; }
+        .action-button:hover { background-color: #0056b3; }
+        select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+
+        /* Notification Log */
+        .alert-log { background: #fff3cd; color: #856404; padding: 10px; border-radius: 4px; margin-top: 10px; border: 1px solid #ffeeba; }
+        #grading-output { margin-top: 15px; font-weight: bold; color: #28a745; }
+    </style>
 </head>
 <body>
-  <!-- Login Box -->
-  <div class="box" id="loginBox">
-    <h2>🔐 Login</h2>
-    <label>Username</label>
-    <input id="username" type="text" placeholder="Enter username">
-    <label>Password</label>
-    <input id="password" type="password" placeholder="Enter password">
-    <button id="loginBtn">Login</button>
-    <div id="loginError" class="error"></div>
-  </div>
 
-  <!-- Main Box After Login -->
-  <div class="box hidden" id="mainBox">
-    <h2>Prototype Pattern Demo</h2>
-    <div class="tabs">
-      <button data-tab="food" class="active">🍕 Food</button>
-      <button data-tab="bank">🏦 Banking</button>
-      <button data-tab="shop">🛒 E-commerce</button>
-      <button data-tab="ride">🚖 Ride</button>
+    <h2>Learning Management System (LMS)</h2>
+    <p>Demonstrating **Observer**, **Strategy**, and **Command** Design Patterns.</p>
+
+    <div class="section">
+        <h3>📢 System Notifications Log (Observer Pattern)</h3>
+        <div id="notificationLog" class="alert-log">System Ready. Notifications will appear here...</div>
+        <button class="action-button" onclick="lmsApp.publishUpdate()">Publish New Assignment (Notifies Student **Shiva**)</button>
     </div>
 
-    <!-- Food Section -->
-    <div class="tab" id="food">
-      <h3>🍕 Clone Food Order</h3>
-      <label>Choose Template Order:</label>
-      <select id="foodTemplate">
-        <option value="0">Pizza Hut — 2x Veggie Pizza</option>
-        <option value="1">Domino's — 1x Cheese Burst</option>
-        <option value="2">Burger King — 3x Whopper</option>
-      </select>
-      <label>Quantity</label>
-      <input id="foodQty" type="number" min="1" value="1">
-      <label>Delivery Address</label>
-      <input id="foodAddr" type="text" placeholder="Enter delivery address">
-      <button onclick="cloneFood()">Clone Order</button>
-      <div class="result" id="foodResult">No clone yet.</div>
+    <div class="section">
+        <h3>📐 Grading Strategy (Strategy Pattern)</h3>
+        <p>Current Score: <span id="currentScore">85</span>/100</p>
+        <select id="gradingStrategySelect">
+            <option value="percentage">Percentage Grading (e.g., 85%)</option>
+            <option value="cgpa">CGPA Grading (e.g., 3.4)</option>
+            <option value="passfail">Pass/Fail Grading (e.g., Pass)</option>
+        </select>
+        <button class="action-button" onclick="lmsApp.applyGradingStrategy()">Apply Grading Strategy</button>
+        <div id="grading-output">Result: </div>
     </div>
 
-    <!-- Banking Section -->
-    <div class="tab hidden" id="bank">
-      <h3>🏦 Clone Investment Plan</h3>
-      <label>Choose Template Plan:</label>
-      <select id="bankTemplate">
-        <option value="0">Retirement Plan — 20 yrs, 8% interest</option>
-        <option value="1">Child Education Plan — 10 yrs, 7% interest</option>
-      </select>
-      <label>Investment Amount</label>
-      <input id="bankAmount" type="number" value="50000">
-      <button onclick="cloneBank()">Clone Plan</button>
-      <div class="result" id="bankResult">No clone yet.</div>
+    <div class="section">
+        <h3>⚡ Student Actions (Command Pattern)</h3>
+        <div class="course-box">
+            <strong>Course: CS405 - Software Engineering & System Design</strong>
+        </div>
+        <div class="student-box">
+            <strong>Student: Shiva</strong>
+        </div>
+        <button class="action-button" onclick="lmsApp.executeCommand('enroll')">Enroll Course (Command)</button>
+        <button class="action-button" onclick="lmsApp.executeCommand('drop')">Drop Course (Command)</button>
+        <button class="action-button" onclick="lmsApp.executeCommand('submit')">Submit Assignment (Command)</button>
     </div>
 
-    <!-- E-commerce Section -->
-    <div class="tab hidden" id="shop">
-      <h3>🛒 Clone Product</h3>
-      <label>Choose Template Product:</label>
-      <select id="shopTemplate">
-        <option value="0">T-shirt (M, Blue)</option>
-        <option value="1">Sneakers (Size 9, White)</option>
-      </select>
-      <label>New Size/Variant</label>
-      <input id="shopVariant" type="text" placeholder="Enter new size or color">
-      <button onclick="cloneShop()">Clone Product</button>
-      <div class="result" id="shopResult">No clone yet.</div>
-    </div>
+    <script>
+        // --- Utility for UI updates ---
+        function logNotification(message) {
+            const logElement = document.getElementById('notificationLog');
+            const newEntry = document.createElement('div');
+            newEntry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logElement.prepend(newEntry);
+            // Limit log entries to keep the view clean
+            while (logElement.children.length > 5) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
 
-    <!-- Ride Section -->
-    <div class="tab hidden" id="ride">
-      <h3>🚖 Clone Ride Preferences</h3>
-      <label>Choose Template Ride:</label>
-      <select id="rideTemplate">
-        <option value="0">Home → Office, Car, Paytm</option>
-        <option value="1">Hostel → Gym, Bike, Cash</option>
-      </select>
-      <label>Pickup Address</label>
-      <input id="ridePickup" type="text" placeholder="Enter pickup address">
-      <button onclick="cloneRide()">Clone Ride</button>
-      <div class="result" id="rideResult">No clone yet.</div>
-    </div>
-  </div>
+        // =================================================================
+        // 1. OBSERVER PATTERN (Subject: Course, Observer: Student)
+        // =================================================================
 
-  <script>
-    // ------------ LOGIN -------------
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-      if(user === "sricharan" && pass === "order123") {
-        document.getElementById("loginBox").classList.add("hidden");
-        document.getElementById("mainBox").classList.remove("hidden");
-      } else {
-        document.getElementById("loginError").textContent = "❌ Invalid credentials";
-      }
-    });
+        class Course {
+            constructor(name) {
+                this.name = name;
+                this.students = [];
+            }
 
-    // ------------ TABS -------------
-    const tabs = document.querySelectorAll(".tabs button");
-    tabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        tabs.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        document.querySelectorAll(".tab").forEach(div=>div.classList.add("hidden"));
-        document.getElementById(btn.dataset.tab).classList.remove("hidden");
-      });
-    });
+            addStudent(student) {
+                if (!this.students.includes(student)) {
+                    this.students.push(student);
+                    logNotification(`Student ${student.name} is now observing ${this.name}.`);
+                }
+            }
 
-    // ------------ CLASSES (Prototypes) -------------
-    class FoodOrder {
-      constructor(rest, item, qty, addr) { this.rest=rest; this.item=item; this.qty=qty; this.addr=addr; }
-      clone(){ return new FoodOrder(this.rest,this.item,this.qty,this.addr); }
-      toString(){ return ${this.rest}: ${this.qty} x ${this.item} | Deliver to: ${this.addr}; }
-    }
-    class InvestmentPlan {
-      constructor(name, yrs, rate, amt){ this.name=name; this.yrs=yrs; this.rate=rate; this.amt=amt; }
-      clone(){ return new InvestmentPlan(this.name,this.yrs,this.rate,this.amt); }
-      toString(){ return ${this.name}: ${this.yrs} yrs @ ${this.rate}% | Amount: ₹${this.amt}; }
-    }
-    class Product {
-      constructor(name, variant){ this.name=name; this.variant=variant; }
-      clone(){ return new Product(this.name,this.variant); }
-      toString(){ return ${this.name} (${this.variant}); }
-    }
-    class RidePref {
-      constructor(pick, drop, vehicle, pay){ this.pick=pick; this.drop=drop; this.vehicle=vehicle; this.pay=pay; }
-      clone(){ return new RidePref(this.pick,this.drop,this.vehicle,this.pay); }
-      toString(){ return ${this.pick} → ${this.drop}, ${this.vehicle}, Pay: ${this.pay}; }
-    }
+            removeStudent(student) {
+                const index = this.students.indexOf(student);
+                if (index > -1) {
+                    this.students.splice(index, 1);
+                    logNotification(`Student ${student.name} stopped observing ${this.name}.`);
+                }
+            }
 
-    // ------------ Templates -------------
-    const foodTemplates = [
-      new FoodOrder("Pizza Hut","Veggie Pizza",2,"MG Road"),
-      new FoodOrder("Domino's","Cheese Burst",1,"Park Street"),
-      new FoodOrder("Burger King","Whopper",3,"Station Road"),
-    ];
-    const bankTemplates = [
-      new InvestmentPlan("Retirement Plan",20,8,100000),
-      new InvestmentPlan("Child Education Plan",10,7,75000),
-    ];
-    const shopTemplates = [
-      new Product("T-shirt","M, Blue"),
-      new Product("Sneakers","Size 9, White"),
-    ];
-    const rideTemplates = [
-      new RidePref("Home","Office","Car","Paytm"),
-      new RidePref("Hostel","Gym","Bike","Cash"),
-    ];
+            notify(update) {
+                logNotification(`<strong>${this.name} published: ${update}</strong>`);
+                this.students.forEach(student => student.update(this.name, update));
+            }
 
-    // ------------ Clone Functions -------------
-    function cloneFood(){
-      const idx=document.getElementById("foodTemplate").value;
-      const qty=document.getElementById("foodQty").value;
-      const addr=document.getElementById("foodAddr").value||foodTemplates[idx].addr;
-      const original=foodTemplates[idx]; const c=original.clone();
-      c.qty=qty; c.addr=addr;
-      document.getElementById("foodResult").textContent=
-        ✅ Clone: ${c.toString()}\n🟦 Original: ${original.toString()};
-    }
-    function cloneBank(){
-      const idx=document.getElementById("bankTemplate").value;
-      const amt=document.getElementById("bankAmount").value;
-      const original=bankTemplates[idx]; const c=original.clone();
-      c.amt=amt;
-      document.getElementById("bankResult").textContent=
-        ✅ Clone: ${c.toString()}\n🟦 Original: ${original.toString()};
-    }
-    function cloneShop(){
-      const idx=document.getElementById("shopTemplate").value;
-      const variant=document.getElementById("shopVariant").value||shopTemplates[idx].variant;
-      const original=shopTemplates[idx]; const c=original.clone();
-      c.variant=variant;
-      document.getElementById("shopResult").textContent=
-        ✅ Clone: ${c.toString()}\n🟦 Original: ${original.toString()};
-    }
-    function cloneRide(){
-      const idx=document.getElementById("rideTemplate").value;
-      const pickup=document.getElementById("ridePickup").value||rideTemplates[idx].pick;
-      const original=rideTemplates[idx]; const c=original.clone();
-      c.pick=pickup;
-      document.getElementById("rideResult").textContent=
-        ✅ Clone: ${c.toString()}\n🟦 Original: ${original.toString()};
-    }
-  </script>
+            publishAssignment(name) {
+                this.notify(`New Assignment: ${name} is due next week.`);
+            }
+        }
+
+        class Student {
+            constructor(name) {
+                this.name = name;
+            }
+
+            update(courseName, status) {
+                logNotification(`[${this.name}'s Inbox]: Received update from ${courseName} - ${status}`);
+            }
+        }
+
+        // =================================================================
+        // 2. STRATEGY PATTERN (GradingStrategy)
+        // =================================================================
+
+        class GradingStrategy {
+            calculate(score, maxScore) {
+                throw new Error("calculate() must be implemented by concrete strategies.");
+            }
+        }
+
+        class PercentageGrading extends GradingStrategy {
+            calculate(score, maxScore) {
+                const percent = (score / maxScore) * 100;
+                return `${percent.toFixed(2)}%`;
+            }
+        }
+
+        class CGPAGrading extends GradingStrategy {
+            calculate(score, maxScore) {
+                const percent = (score / maxScore) * 100;
+                if (percent >= 90) return '4.0';
+                if (percent >= 80) return '3.4';
+                if (percent >= 70) return '2.8';
+                return 'Below 2.8';
+            }
+        }
+
+        class PassFailGrading extends GradingStrategy {
+            calculate(score, maxScore) {
+                const percent = (score / maxScore) * 100;
+                return percent >= 60 ? 'PASS' : 'FAIL';
+            }
+        }
+
+        // =================================================================
+        // 3. COMMAND PATTERN (Actions)
+        // =================================================================
+
+        class Command {
+            execute() {
+                throw new Error("execute() must be implemented by concrete commands.");
+            }
+        }
+
+        class EnrollCommand extends Command {
+            constructor(student, course) {
+                super();
+                this.student = student;
+                this.course = course;
+            }
+            execute() {
+                this.course.addStudent(this.student);
+                logNotification(`[Command Executed] ${this.student.name} **ENROLLED** in ${this.course.name}.`);
+            }
+        }
+
+        class DropCommand extends Command {
+            constructor(student, course) {
+                super();
+                this.student = student;
+                this.course = course;
+            }
+            execute() {
+                this.course.removeStudent(this.student);
+                logNotification(`[Command Executed] ${this.student.name} **DROPPED** ${this.course.name}.`);
+            }
+        }
+
+        class SubmitCommand extends Command {
+            constructor(student, assignment) {
+                super();
+                this.student = student;
+                this.assignment = assignment;
+            }
+            execute() {
+                logNotification(`[Command Executed] ${this.student.name} **SUBMITTED** assignment: ${this.assignment}.`);
+            }
+        }
+
+        // =================================================================
+        // LMS APPLICATION CONTEXT
+        // =================================================================
+
+        class LMS {
+            constructor() {
+                // UPDATED COURSE NAME: Software Engineering & System Design
+                this.cs405 = new Course("CS405 - Software Engineering & System Design");
+                this.shiva = new Student("Shiva"); 
+                
+                this.gradingStrategies = {
+                    percentage: new PercentageGrading(),
+                    cgpa: new CGPAGrading(),
+                    passfail: new PassFailGrading(),
+                };
+
+                // Auto-enroll Shiva initially for Observer demo setup
+                this.cs405.addStudent(this.shiva);
+            }
+
+            // --- Observer Interaction ---
+            publishUpdate() {
+                // UPDATED ASSIGNMENT NAME (SE/SD Topic)
+                this.cs405.publishAssignment("UML Modeling Project");
+            }
+
+            // --- Strategy Interaction ---
+            applyGradingStrategy() {
+                const score = parseFloat(document.getElementById('currentScore').textContent);
+                const maxScore = 100;
+                const strategyType = document.getElementById('gradingStrategySelect').value;
+                
+                const strategy = this.gradingStrategies[strategyType];
+                
+                if (strategy) {
+                    const result = strategy.calculate(score, maxScore);
+                    document.getElementById('grading-output').innerHTML = `Result: **${result}** (using ${strategyType} strategy)`;
+                }
+            }
+
+            // --- Command Interaction ---
+            executeCommand(commandType) {
+                let command;
+                
+                switch (commandType) {
+                    case 'enroll':
+                        command = new EnrollCommand(this.shiva, this.cs405);
+                        break;
+                    case 'drop':
+                        command = new DropCommand(this.shiva, this.cs405);
+                        break;
+                    case 'submit':
+                        // UPDATED SUBMISSION ITEM (SE/SD Topic)
+                        command = new SubmitCommand(this.shiva, "Architecture Review Report");
+                        break;
+                    default:
+                        logNotification("Invalid command type.");
+                        return;
+                }
+
+                command.execute();
+            }
+        }
+
+        // Instantiate the application and make it globally accessible for HTML onclick handlers
+        const lmsApp = new LMS();
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            lmsApp.applyGradingStrategy();
+        });
+
+    </script>
 </body>
 </html>
