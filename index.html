@@ -3,275 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMS - Design Patterns Demo (Deekshith/CS405)</title>
+    <title>Abhinav's Banking Application Demo</title>
     <style>
-        /* General Styles */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
-        h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        .section { background: #ffffff; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .course-box, .student-box { border: 1px solid #e0e0e0; padding: 15px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
-        .course-box strong { color: #28a745; }
-        .student-box strong { color: #dc3545; }
+        /* CSS from style.css */
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f3f6fb;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
 
-        /* Button and Input Styles */
-        button { padding: 10px 15px; margin: 5px; cursor: pointer; border: none; border-radius: 4px; transition: background 0.3s; }
-        .action-button { background-color: #007bff; color: white; }
-        .action-button:hover { background-color: #0056b3; }
-        select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+        header {
+            background: #004aad;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
 
-        /* Notification Log */
-        .alert-log { background: #fff3cd; color: #856404; padding: 10px; border-radius: 4px; margin-top: 10px; border: 1px solid #ffeeba; }
-        #grading-output { margin-top: 15px; font-weight: bold; color: #28a745; }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 2rem;
+        }
+
+        section {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 700px;
+        }
+
+        h2 {
+            color: #004aad;
+            border-bottom: 2px solid #004aad;
+            padding-bottom: 4px;
+        }
+
+        button, select, input {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #004aad;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00307a;
+        }
+
+        #logOutput {
+            background: #111;
+            color: #0f0;
+            height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            white-space: pre-wrap; /* Ensure line breaks are preserved */
+        }
+
+        #controls > * {
+            margin-bottom: 10px;
+        }
+
     </style>
 </head>
 <body>
+    <header>
+        <h1>🏦 Abhinav's Banking Application Demo</h1>
+        <p>Observer + Strategy + Command Patterns</p>
+    </header>
 
-    <h2>Learning Management System (LMS)</h2>
-    <p>Demonstrating **Observer**, **Strategy**, and **Command** Design Patterns.</p>
+    <main>
+        <section id="controls">
+            <h2>Perform Transaction</h2>
+            <select id="operation">
+                <option value="deposit">Deposit (to Savings)</option>
+                <option value="withdraw">Withdraw (from Savings)</option>
+                <option value="transfer">Transfer (Savings to Current)</option>
+            </select>
 
-    <div class="section">
-        <h3>📢 System Notifications Log (Observer Pattern)</h3>
-        <div id="notificationLog" class="alert-log">System Ready. Notifications will appear here...</div>
-        <button class="action-button" onclick="lmsApp.publishUpdate()">Publish New Assignment (Notifies Student **Deekshith**)</button>
-    </div>
+            <input type="number" id="amount" placeholder="Amount" />
+            <button id="executeBtn">Execute</button>
+            <button id="undoBtn">Undo</button>
+        </section>
 
-    <div class="section">
-        <h3>📐 Grading Strategy (Strategy Pattern)</h3>
-        <p>Current Score: <span id="currentScore">85</span>/100</p>
-        <select id="gradingStrategySelect">
-            <option value="percentage">Percentage Grading (e.g., 85%)</option>
-            <option value="cgpa">CGPA Grading (e.g., 3.4)</option>
-            <option value="passfail">Pass/Fail Grading (e.g., Pass)</option>
-        </select>
-        <button class="action-button" onclick="lmsApp.applyGradingStrategy()">Apply Grading Strategy</button>
-        <div id="grading-output">Result: </div>
-    </div>
+        <section id="accounts">
+            <h2>Accounts</h2>
+            <div id="accountInfo"></div>
+        </section>
 
-    <div class="section">
-        <h3>⚡ Student Actions (Command Pattern)</h3>
-        <div class="course-box">
-            <strong>Course: CS405 - Software Engineering & System Design</strong>
-        </div>
-        <div class="student-box">
-            <strong>Student: Deekshith</strong>
-        </div>
-        <button class="action-button" onclick="lmsApp.executeCommand('enroll')">Enroll Course (Command)</button>
-        <button class="action-button" onclick="lmsApp.executeCommand('drop')">Drop Course (Command)</button>
-        <button class="action-button" onclick="lmsApp.executeCommand('submit')">Submit Assignment (Command)</button>
-    </div>
+        <section id="log">
+            <h2>Transaction Log</h2>
+            <pre id="logOutput"></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>Designed with ❤️ using JavaScript Design Patterns by Abhinav</p>
+    </footer>
 
     <script>
-        // --- Utility for UI updates ---
-        function logNotification(message) {
-            const logElement = document.getElementById('notificationLog');
-            const newEntry = document.createElement('div');
-            newEntry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-            logElement.prepend(newEntry);
-            // Limit log entries to keep the view clean
-            while (logElement.children.length > 5) {
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
-
-        // =================================================================
-        // 1. OBSERVER PATTERN (Subject: Course, Observer: Student)
-        // =================================================================
-
-        class Course {
-            constructor(name) {
-                this.name = name;
-                this.students = [];
-            }
-
-            addStudent(student) {
-                if (!this.students.includes(student)) {
-                    this.students.push(student);
-                    logNotification(`Student ${student.name} is now observing ${this.name}.`);
-                }
-            }
-
-            removeStudent(student) {
-                const index = this.students.indexOf(student);
-                if (index > -1) {
-                    this.students.splice(index, 1);
-                    logNotification(`Student ${student.name} stopped observing ${this.name}.`);
-                }
-            }
-
-            notify(update) {
-                logNotification(`<strong>${this.name} published: ${update}</strong>`);
-                this.students.forEach(student => student.update(this.name, update));
-            }
-
-            publishAssignment(name) {
-                this.notify(`New Assignment: ${name} is due next week.`);
-            }
-        }
-
-        class Student {
+        // ==========================
+        // Observer Pattern
+        // ==========================
+        class Customer {
             constructor(name) {
                 this.name = name;
             }
-
-            update(courseName, status) {
-                logNotification(`[${this.name}'s Inbox]: Received update from ${courseName} - ${status}`);
+            update(account, message) {
+                log(`[Notification] ${this.name}: ${message} | Balance: ₹${account.balance.toFixed(2)}`);
             }
         }
 
-        // =================================================================
-        // 2. STRATEGY PATTERN (GradingStrategy)
-        // =================================================================
+        // ==========================
+        // Strategy Pattern
+        // ==========================
+        class InterestStrategy {
+            calculate(account, years) { return 0; }
+        }
 
-        class GradingStrategy {
-            calculate(score, maxScore) {
-                throw new Error("calculate() must be implemented by concrete strategies.");
+        class SavingsInterest extends InterestStrategy {
+            calculate(account, years) { return account.balance * 0.04 * years; }
+        }
+
+        class FDInterest extends InterestStrategy {
+            calculate(account, years) { return account.balance * 0.07 * years; }
+        }
+
+        class CurrentInterest extends InterestStrategy {
+            calculate(account, years) { return account.balance * 0.005 * years; }
+        }
+
+        // ==========================
+        // Account (Subject in Observer)
+        // ==========================
+        class Account {
+            constructor(id, type, balance, strategy) {
+                this.id = id;
+                this.type = type;
+                this.balance = balance;
+                this.observers = [];
+                this.strategy = strategy;
+            }
+
+            addObserver(customer) { this.observers.push(customer); }
+            notify(msg) { this.observers.forEach(o => o.update(this, msg)); }
+
+            deposit(amount) {
+                this.balance += amount;
+                this.notify(`Deposited ₹${amount}`);
+            }
+
+            withdraw(amount) {
+                if (this.balance < amount) {
+                    log(`❌ Insufficient funds in ${this.id}`);
+                    return false; // Indicate failure
+                }
+                this.balance -= amount;
+                this.notify(`Withdrew ₹${amount}`);
+                return true; // Indicate success
+            }
+
+            calculateInterest(years) {
+                return this.strategy.calculate(this, years);
             }
         }
 
-        class PercentageGrading extends GradingStrategy {
-            calculate(score, maxScore) {
-                const percent = (score / maxScore) * 100;
-                return `${percent.toFixed(2)}%`;
-            }
-        }
-
-        class CGPAGrading extends GradingStrategy {
-            calculate(score, maxScore) {
-                const percent = (score / maxScore) * 100;
-                if (percent >= 90) return '4.0';
-                if (percent >= 80) return '3.4';
-                if (percent >= 70) return '2.8';
-                return 'Below 2.8';
-            }
-        }
-
-        class PassFailGrading extends GradingStrategy {
-            calculate(score, maxScore) {
-                const percent = (score / maxScore) * 100;
-                return percent >= 60 ? 'PASS' : 'FAIL';
-            }
-        }
-
-        // =================================================================
-        // 3. COMMAND PATTERN (Actions)
-        // =================================================================
-
+        // ==========================
+        // Command Pattern
+        // ==========================
         class Command {
-            execute() {
-                throw new Error("execute() must be implemented by concrete commands.");
-            }
+            execute() {}
+            undo() {}
         }
 
-        class EnrollCommand extends Command {
-            constructor(student, course) {
+        class DepositCommand extends Command {
+            constructor(account, amount) {
                 super();
-                this.student = student;
-                this.course = course;
+                this.account = account;
+                this.amount = amount;
             }
-            execute() {
-                this.course.addStudent(this.student);
-                logNotification(`[Command Executed] ${this.student.name} **ENROLLED** in ${this.course.name}.`);
-            }
+            execute() { this.account.deposit(this.amount); }
+            undo() { this.account.withdraw(this.amount); }
         }
 
-        class DropCommand extends Command {
-            constructor(student, course) {
+        class WithdrawCommand extends Command {
+            constructor(account, amount) {
                 super();
-                this.student = student;
-                this.course = course;
+                this.account = account;
+                this.amount = amount;
             }
-            execute() {
-                this.course.removeStudent(this.student);
-                logNotification(`[Command Executed] ${this.student.name} **DROPPED** ${this.course.name}.`);
-            }
+            execute() { this.account.withdraw(this.amount); }
+            undo() { this.account.deposit(this.amount); }
         }
 
-        class SubmitCommand extends Command {
-            constructor(student, assignment) {
+        class TransferCommand extends Command {
+            constructor(from, to, amount) {
                 super();
-                this.student = student;
-                this.assignment = assignment;
+                this.from = from;
+                this.to = to;
+                this.amount = amount;
             }
             execute() {
-                logNotification(`[Command Executed] ${this.student.name} **SUBMITTED** assignment: ${this.assignment}.`);
+                // Check if withdrawal is possible before attempting deposit
+                if (this.from.withdraw(this.amount)) {
+                    this.to.deposit(this.amount);
+                    return true;
+                }
+                return false; // Transfer failed due to insufficient funds
+            }
+            undo() {
+                // Undo assumes the transaction was successful and reverses the operations
+                this.to.withdraw(this.amount);
+                this.from.deposit(this.amount);
             }
         }
 
-        // =================================================================
-        // LMS APPLICATION CONTEXT
-        // =================================================================
-
-        class LMS {
-            constructor() {
-                // Course subject (The Subject in Observer Pattern)
-                this.cs405 = new Course("CS405 - Software Engineering & System Design");
-                // Student object (The Observer and Command Receiver)
-                this.studentDeekshith = new Student("Deekshith"); 
-                
-                // Strategy instances
-                this.gradingStrategies = {
-                    percentage: new PercentageGrading(),
-                    cgpa: new CGPAGrading(),
-                    passfail: new PassFailGrading(),
-                };
-
-                // Initial Setup: Auto-enroll Deekshith
-                this.cs405.addStudent(this.studentDeekshith);
-            }
-
-            // --- Observer Interaction ---
-            publishUpdate() {
-                this.cs405.publishAssignment("UML Modeling Project");
-            }
-
-            // --- Strategy Interaction ---
-            applyGradingStrategy() {
-                const score = parseFloat(document.getElementById('currentScore').textContent);
-                const maxScore = 100;
-                const strategyType = document.getElementById('gradingStrategySelect').value;
-                
-                const strategy = this.gradingStrategies[strategyType];
-                
-                if (strategy) {
-                    const result = strategy.calculate(score, maxScore);
-                    document.getElementById('grading-output').innerHTML = `Result: **${result}** (using ${strategyType} strategy)`;
+        class TransactionManager {
+            constructor() { this.history = []; }
+            execute(cmd) {
+                // Only push successful commands to history for undo
+                let success = cmd.execute();
+                if (success !== false) { // Assuming commands return true/undefined on success
+                    this.history.push(cmd);
                 }
             }
-
-            // --- Command Interaction ---
-            executeCommand(commandType) {
-                let command;
-                
-                // Reference the Deekshith student object
-                const student = this.studentDeekshith; 
-                const course = this.cs405;
-
-                switch (commandType) {
-                    case 'enroll':
-                        command = new EnrollCommand(student, course);
-                        break;
-                    case 'drop':
-                        command = new DropCommand(student, course);
-                        break;
-                    case 'submit':
-                        command = new SubmitCommand(student, "Architecture Review Report");
-                        break;
-                    default:
-                        logNotification("Invalid command type.");
-                        return;
+            undo() {
+                const last = this.history.pop();
+                if (last) {
+                    last.undo();
+                    log(`↩️ Undid last operation`);
+                } else {
+                    log(`⚠️ No operations to undo`);
                 }
-
-                command.execute();
             }
         }
 
-        // Instantiate the application and make it globally accessible for HTML onclick handlers
-        const lmsApp = new LMS();
+        // ==========================
+        // UI and Simulation
+        // ==========================
+        const logOutput = document.getElementById("logOutput");
+        function log(msg) {
+            logOutput.textContent += msg + "\n";
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
 
-        // Initial setup
-        document.addEventListener('DOMContentLoaded', () => {
-            lmsApp.applyGradingStrategy();
-        });
+        const accountInfo = document.getElementById("accountInfo");
+
+        // Create customers
+        const abhinav = new Customer("Abhinav"); // Name changed
+        const bob = new Customer("Bob");
+
+        // Create accounts
+        const savings = new Account("A1001", "Savings", 1000, new SavingsInterest());
+        const current = new Account("C2001", "Current", 500, new CurrentInterest());
+
+        // Subscribe
+        savings.addObserver(abhinav); // Subscriber changed
+        current.addObserver(bob);
+
+        // Transaction manager
+        const tm = new TransactionManager();
+
+        function updateAccounts() {
+            accountInfo.innerHTML = `
+                <p><strong>${savings.id}</strong> (${savings.type} - **Abhinav's**) → ₹${savings.balance.toFixed(2)}</p>
+                <p><strong>${current.id}</strong> (${current.type} - **Bob's**) → ₹${current.balance.toFixed(2)}</p>
+            `;
+        }
+        updateAccounts();
+
+        // Event handlers
+        document.getElementById("executeBtn").onclick = () => {
+            const op = document.getElementById("operation").value;
+            const amountInput = document.getElementById("amount");
+            const amt = parseFloat(amountInput.value);
+
+            if (!amt || amt <= 0) return log("⚠️ Enter a valid amount.");
+
+            let cmd;
+            if (op === "deposit") cmd = new DepositCommand(savings, amt);
+            else if (op === "withdraw") cmd = new WithdrawCommand(savings, amt);
+            else if (op === "transfer") cmd = new TransferCommand(savings, current, amt);
+            else return log("⚠️ Invalid operation selected.");
+
+            tm.execute(cmd);
+            updateAccounts();
+            amountInput.value = ''; // Clear input after execution
+        };
+
+        document.getElementById("undoBtn").onclick = () => {
+            tm.undo();
+            updateAccounts();
+        };
+
+        // Initial log
+        log(`Welcome, Abhinav! Initial balances set.`);
+        log("💡 Interest (1 year):");
+        log(`Savings (4%): ₹${savings.calculateInterest(1).toFixed(2)}`);
+        log(`Current (0.5%): ₹${current.calculateInterest(1).toFixed(2)}`);
 
     </script>
 </body>
