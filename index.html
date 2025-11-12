@@ -3,318 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abhinav's Banking Application Demo</title>
+    <title>Movie Recommendation App</title>
     <style>
-        /* CSS from style.css */
-        body {
-            font-family: "Segoe UI", sans-serif;
-            background-color: #f3f6fb;
+        * {
             margin: 0;
             padding: 0;
-            color: #222;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         header {
-            background: #004aad;
-            color: white;
             text-align: center;
-            padding: 1rem;
+            margin-bottom: 30px;
+            color: white;
         }
 
-        main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            margin: 2rem;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        section {
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .app-container {
             background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 700px;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
         }
 
-        h2 {
-            color: #004aad;
-            border-bottom: 2px solid #004aad;
-            padding-bottom: 4px;
+        .search-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
         }
 
-        button, select, input {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            margin-right: 5px;
-            border: 1px solid #ccc;
+        #searchInput {
+            flex: 1;
+            max-width: 500px;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
         }
 
-        button {
-            background: #004aad;
+        #searchInput:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        #searchBtn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
             color: white;
             border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        button:hover {
-            background: #00307a;
+        #searchBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
         }
 
-        #logOutput {
-            background: #111;
-            color: #0f0;
-            height: 200px;
-            overflow-y: auto;
-            padding: 10px;
+        .movie-results {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .movie-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .movie-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+        }
+
+        .movie-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .movie-year {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .movie-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+        }
+
+        .movie-poster {
+            width: 100%;
             border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .movie-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .movie-rating {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
             font-size: 0.9rem;
-            white-space: pre-wrap; /* Ensure line breaks are preserved */
         }
 
-        #controls > * {
-            margin-bottom: 10px;
+        .movie-genre {
+            color: #666;
+            font-size: 1rem;
         }
 
+        .movie-plot {
+            color: #555;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .recommendations {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .recommendations h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .rec-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .rec-genre {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .rec-rating {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a90e2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .initial-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .api-status {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .movie-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .movie-poster {
+                max-width: 250px;
+                margin: 0 auto;
+            }
+            
+            .search-section {
+                flex-direction: column;
+            }
+            
+            #searchInput {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🏦 Abhinav's Banking Application Demo</h1>
-        <p>Observer + Strategy + Command Patterns</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Movie Recommendation App</h1>
+            <p class="subtitle">Search your favorite movies and get recommendations</p>
+        </header>
 
-    <main>
-        <section id="controls">
-            <h2>Perform Transaction</h2>
-            <select id="operation">
-                <option value="deposit">Deposit (to Savings)</option>
-                <option value="withdraw">Withdraw (from Savings)</option>
-                <option value="transfer">Transfer (Savings to Current)</option>
-            </select>
+        <div class="app-container">
+            <div class="search-section">
+                <input type="text" id="searchInput" placeholder="Search your favorite movie...">
+                <button id="searchBtn">Search</button>
+            </div>
 
-            <input type="number" id="amount" placeholder="Amount" />
-            <button id="executeBtn">Execute</button>
-            <button id="undoBtn">Undo</button>
-        </section>
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Searching for movies...</p>
+            </div>
 
-        <section id="accounts">
-            <h2>Accounts</h2>
-            <div id="accountInfo"></div>
-        </section>
+            <div id="error" class="error hidden"></div>
 
-        <section id="log">
-            <h2>Transaction Log</h2>
-            <pre id="logOutput"></pre>
-        </section>
-    </main>
+            <div id="initialMessage" class="initial-message">
+                <p>Start by typing a movie name above!</p>
+            </div>
 
-    <footer>
-        <p>Designed with ❤️ using JavaScript Design Patterns by Abhinav</p>
-    </footer>
+            <div id="movieResults" class="movie-results hidden">
+                <!-- Movie results will be displayed here -->
+            </div>
+
+            <div id="recommendations" class="recommendations hidden">
+                <h3>Recommended Movies</h3>
+                <div id="recommendationGrid" class="recommendation-grid">
+                    <!-- Recommendations will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Created by <strong>V . Shiva Harsha</strong> | Powered by OMDb API <span class="api-status">API: ACTIVE</span></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Enrollment No: 2303A52375 | Batch: 33 | Date: 07/11/25</p>
+        </footer>
+    </div>
 
     <script>
-        // ==========================
-        // Observer Pattern
-        // ==========================
-        class Customer {
-            constructor(name) {
-                this.name = name;
-            }
-            update(account, message) {
-                log(`[Notification] ${this.name}: ${message} | Balance: ₹${account.balance.toFixed(2)}`);
-            }
-        }
+        // OMDb API Configuration
+        const API_KEY = 'a29b2451';
+        const BASE_URL = 'https://www.omdbapi.com/';
 
-        // ==========================
-        // Strategy Pattern
-        // ==========================
-        class InterestStrategy {
-            calculate(account, years) { return 0; }
-        }
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const movieResults = document.getElementById('movieResults');
+        const recommendations = document.getElementById('recommendations');
+        const recommendationGrid = document.getElementById('recommendationGrid');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const initialMessage = document.getElementById('initialMessage');
 
-        class SavingsInterest extends InterestStrategy {
-            calculate(account, years) { return account.balance * 0.04 * years; }
-        }
-
-        class FDInterest extends InterestStrategy {
-            calculate(account, years) { return account.balance * 0.07 * years; }
-        }
-
-        class CurrentInterest extends InterestStrategy {
-            calculate(account, years) { return account.balance * 0.005 * years; }
-        }
-
-        // ==========================
-        // Account (Subject in Observer)
-        // ==========================
-        class Account {
-            constructor(id, type, balance, strategy) {
-                this.id = id;
-                this.type = type;
-                this.balance = balance;
-                this.observers = [];
-                this.strategy = strategy;
-            }
-
-            addObserver(customer) { this.observers.push(customer); }
-            notify(msg) { this.observers.forEach(o => o.update(this, msg)); }
-
-            deposit(amount) {
-                this.balance += amount;
-                this.notify(`Deposited ₹${amount}`);
-            }
-
-            withdraw(amount) {
-                if (this.balance < amount) {
-                    log(`❌ Insufficient funds in ${this.id}`);
-                    return false; // Indicate failure
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            searchBtn.addEventListener('click', searchMovies);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchMovies();
                 }
-                this.balance -= amount;
-                this.notify(`Withdrew ₹${amount}`);
-                return true; // Indicate success
+            });
+
+            // Set placeholder suggestions
+            const suggestions = ['The Dark Knight', 'The Nun', 'Avengers', 'Inception'];
+            let currentSuggestion = 0;
+            
+            setInterval(() => {
+                searchInput.placeholder = `Try "${suggestions[currentSuggestion]}"...`;
+                currentSuggestion = (currentSuggestion + 1) % suggestions.length;
+            }, 3000);
+        });
+
+        async function searchMovies() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                showError('Please enter a movie title to search.');
+                return;
             }
 
-            calculateInterest(years) {
-                return this.strategy.calculate(this, years);
-            }
-        }
+            showLoading();
+            hideError();
+            hideInitialMessage();
+            clearResults();
 
-        // ==========================
-        // Command Pattern
-        // ==========================
-        class Command {
-            execute() {}
-            undo() {}
-        }
-
-        class DepositCommand extends Command {
-            constructor(account, amount) {
-                super();
-                this.account = account;
-                this.amount = amount;
-            }
-            execute() { this.account.deposit(this.amount); }
-            undo() { this.account.withdraw(this.amount); }
-        }
-
-        class WithdrawCommand extends Command {
-            constructor(account, amount) {
-                super();
-                this.account = account;
-                this.amount = amount;
-            }
-            execute() { this.account.withdraw(this.amount); }
-            undo() { this.account.deposit(this.amount); }
-        }
-
-        class TransferCommand extends Command {
-            constructor(from, to, amount) {
-                super();
-                this.from = from;
-                this.to = to;
-                this.amount = amount;
-            }
-            execute() {
-                // Check if withdrawal is possible before attempting deposit
-                if (this.from.withdraw(this.amount)) {
-                    this.to.deposit(this.amount);
-                    return true;
+            try {
+                // Search for movies
+                const searchResponse = await fetch(`${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie`);
+                
+                if (!searchResponse.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                return false; // Transfer failed due to insufficient funds
-            }
-            undo() {
-                // Undo assumes the transaction was successful and reverses the operations
-                this.to.withdraw(this.amount);
-                this.from.deposit(this.amount);
-            }
-        }
 
-        class TransactionManager {
-            constructor() { this.history = []; }
-            execute(cmd) {
-                // Only push successful commands to history for undo
-                let success = cmd.execute();
-                if (success !== false) { // Assuming commands return true/undefined on success
-                    this.history.push(cmd);
+                const searchData = await searchResponse.json();
+                
+                if (searchData.Response === 'False') {
+                    throw new Error(searchData.Error || 'No movies found');
                 }
-            }
-            undo() {
-                const last = this.history.pop();
-                if (last) {
-                    last.undo();
-                    log(`↩️ Undid last operation`);
-                } else {
-                    log(`⚠️ No operations to undo`);
+
+                // Get details for the first movie
+                if (searchData.Search && searchData.Search.length > 0) {
+                    const firstMovie = searchData.Search[0];
+                    const movieDetails = await fetchMovieDetails(firstMovie.imdbID);
+                    
+                    if (movieDetails) {
+                        displayMovie(movieDetails);
+                        await getRecommendations(movieDetails);
+                    }
                 }
+            } catch (err) {
+                showError(err.message || 'Failed to fetch movies. Please try again.');
+            } finally {
+                hideLoading();
             }
         }
 
-        // ==========================
-        // UI and Simulation
-        // ==========================
-        const logOutput = document.getElementById("logOutput");
-        function log(msg) {
-            logOutput.textContent += msg + "\n";
-            logOutput.scrollTop = logOutput.scrollHeight;
+        async function fetchMovieDetails(imdbID) {
+            try {
+                const response = await fetch(`${BASE_URL}?apikey=${API_KEY}&i=${imdbID}&plot=short`);
+                
+                if (!response.ok) {
+                    return null;
+                }
+
+                const data = await response.json();
+                return data.Response === 'True' ? data : null;
+            } catch (error) {
+                console.error('Error fetching movie details:', error);
+                return null;
+            }
         }
 
-        const accountInfo = document.getElementById("accountInfo");
+        function displayMovie(movie) {
+            const posterSrc = movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/300x450/667eea/ffffff?text=No+Poster';
+            const rating = movie.imdbRating !== 'N/A' ? movie.imdbRating : 'N/A';
+            const plot = movie.Plot && movie.Plot !== 'N/A' ? movie.Plot : 'No plot summary available.';
 
-        // Create customers
-        const abhinav = new Customer("Abhinav"); // Name changed
-        const bob = new Customer("Bob");
-
-        // Create accounts
-        const savings = new Account("A1001", "Savings", 1000, new SavingsInterest());
-        const current = new Account("C2001", "Current", 500, new CurrentInterest());
-
-        // Subscribe
-        savings.addObserver(abhinav); // Subscriber changed
-        current.addObserver(bob);
-
-        // Transaction manager
-        const tm = new TransactionManager();
-
-        function updateAccounts() {
-            accountInfo.innerHTML = `
-                <p><strong>${savings.id}</strong> (${savings.type} - **Abhinav's**) → ₹${savings.balance.toFixed(2)}</p>
-                <p><strong>${current.id}</strong> (${current.type} - **Bob's**) → ₹${current.balance.toFixed(2)}</p>
+            const movieHTML = `
+                <div class="movie-card">
+                    <div class="movie-header">
+                        <div class="movie-title">${movie.Title}</div>
+                        <div class="movie-year">${movie.Year}</div>
+                    </div>
+                    <div class="movie-content">
+                        <img src="${posterSrc}" alt="${movie.Title}" class="movie-poster"
+                             onerror="this.src='https://via.placeholder.com/300x450/667eea/ffffff?text=No+Poster'">
+                        <div class="movie-info">
+                            <div>
+                                <span class="movie-rating">⭐ ${rating}/10</span>
+                            </div>
+                            <div class="movie-genre">
+                                <strong>Genre:</strong> ${movie.Genre || 'N/A'}
+                            </div>
+                            <div class="movie-plot">
+                                ${plot}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `;
+
+            movieResults.innerHTML = movieHTML;
+            movieResults.classList.remove('hidden');
         }
-        updateAccounts();
 
-        // Event handlers
-        document.getElementById("executeBtn").onclick = () => {
-            const op = document.getElementById("operation").value;
-            const amountInput = document.getElementById("amount");
-            const amt = parseFloat(amountInput.value);
+        async function getRecommendations(mainMovie) {
+            if (!mainMovie.Genre) {
+                recommendations.classList.add('hidden');
+                return;
+            }
 
-            if (!amt || amt <= 0) return log("⚠️ Enter a valid amount.");
+            try {
+                // Extract main genre from the movie
+                const mainGenre = mainMovie.Genre.split(',')[0].trim();
+                
+                // Search for movies in the same genre
+                const response = await fetch(`${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(mainGenre)}&type=movie`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch recommendations');
+                }
 
-            let cmd;
-            if (op === "deposit") cmd = new DepositCommand(savings, amt);
-            else if (op === "withdraw") cmd = new WithdrawCommand(savings, amt);
-            else if (op === "transfer") cmd = new TransferCommand(savings, current, amt);
-            else return log("⚠️ Invalid operation selected.");
+                const data = await response.json();
+                
+                if (data.Response === 'False') {
+                    recommendations.classList.add('hidden');
+                    return;
+                }
 
-            tm.execute(cmd);
-            updateAccounts();
-            amountInput.value = ''; // Clear input after execution
-        };
+                // Get details for recommended movies (limit to 4)
+                const recommendedMovies = [];
+                const moviePromises = data.Search.slice(0, 4).map(movie => 
+                    fetchMovieDetails(movie.imdbID)
+                );
 
-        document.getElementById("undoBtn").onclick = () => {
-            tm.undo();
-            updateAccounts();
-        };
+                const movieDetails = await Promise.all(moviePromises);
+                
+                movieDetails.forEach(movie => {
+                    if (movie && movie.imdbID !== mainMovie.imdbID) {
+                        recommendedMovies.push(movie);
+                    }
+                });
 
-        // Initial log
-        log(`Welcome, Abhinav! Initial balances set.`);
-        log("💡 Interest (1 year):");
-        log(`Savings (4%): ₹${savings.calculateInterest(1).toFixed(2)}`);
-        log(`Current (0.5%): ₹${current.calculateInterest(1).toFixed(2)}`);
+                displayRecommendations(recommendedMovies);
+            } catch (error) {
+                console.error('Error getting recommendations:', error);
+                recommendations.classList.add('hidden');
+            }
+        }
 
+        function displayRecommendations(movies) {
+            if (movies.length === 0) {
+                recommendations.classList.add('hidden');
+                return;
+            }
+
+            const recommendationsHTML = movies.map(movie => {
+                const rating = movie.imdbRating !== 'N/A' ? movie.imdbRating : 'N/A';
+                const genre = movie.Genre ? movie.Genre.split(',')[0] : 'N/A';
+
+                return `
+                    <div class="recommendation-card">
+                        <div class="rec-title">${movie.Title}</div>
+                        <div class="rec-genre">${genre}</div>
+                        <div class="rec-rating">● ${rating}</div>
+                    </div>
+                `;
+            }).join('');
+
+            recommendationGrid.innerHTML = recommendationsHTML;
+            recommendations.classList.remove('hidden');
+        }
+
+        function showLoading() {
+            loading.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loading.classList.add('hidden');
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.classList.remove('hidden');
+        }
+
+        function hideError() {
+            error.classList.add('hidden');
+        }
+
+        function hideInitialMessage() {
+            initialMessage.classList.add('hidden');
+        }
+
+        function clearResults() {
+            movieResults.innerHTML = '';
+            recommendationGrid.innerHTML = '';
+            movieResults.classList.add('hidden');
+            recommendations.classList.add('hidden');
+        }
+
+        // Test API connection on load
+        async function testAPI() {
+            try {
+                const response = await fetch(`${BASE_URL}?apikey=${API_KEY}&s=test&type=movie`);
+                const data = await response.json();
+                
+                if (data.Response === "True" || data.Response === "False") {
+                    console.log("API connection successful");
+                }
+            } catch (error) {
+                console.error("API connection failed:", error);
+                document.querySelector('.api-status').textContent = 'API: INACTIVE';
+                document.querySelector('.api-status').style.background = '#e74c3c';
+            }
+        }
+
+        // Initialize API test
+        testAPI();
     </script>
 </body>
 </html>
